@@ -22,6 +22,7 @@ jobs:
       - name: Run Slack Action Dynamic Workflow result
         uses: ./
         with:
+          template_file: default-payload.json
           status: ${{ job.status }}
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}

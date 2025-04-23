@@ -1,6 +1,10 @@
 name: "Slack Notification"
 description: "Send a templated Slack notification after a GitHub Actions job"
 inputs:
+  template_file:
+    required: false
+    default: "default-payload.json"
+    description: "Name of the avaliable template file."
   status:
     required: true
     description: "The job status (success/failure)"
@@ -63,7 +67,7 @@ runs:
       with:
         method: ${{ inputs.method }}
         token: ${{ inputs.token }}
-        payload-file-path: ./.github/resources/.slack/default-payload.json
+        payload-file-path: ./.github/resources/.slack/${{ inputs.template_file }}
         payload-templated: ${{ inputs.payload-templated }}
         api: ${{ inputs.api }}
         proxy: ${{ inputs.proxy }}
