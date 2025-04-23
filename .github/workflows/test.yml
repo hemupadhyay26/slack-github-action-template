@@ -13,10 +13,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Slack Action Locally
+      - name: Run Slack Action Dynamic Workflow result
         uses: ./
         with:
           status: ${{ job.status }}
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           run_number: ${{ github.run_number }} 
-          channel_id: C08M4MK1QLD
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+
+      - name: Run Slack Action for Failure
+        uses: ./
+        with:
+          status: failure
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_number: ${{ github.run_number }} 
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+
+      - name: Run Slack Action for Success
+        uses: ./
+        with:
+          status: success
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_number: ${{ github.run_number }} 
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}

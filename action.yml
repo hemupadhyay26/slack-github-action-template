@@ -17,7 +17,7 @@ runs:
   using: "composite"
   steps:
     - name: Set Slack color
-      id: color
+      id: statusColor
       shell: bash
       run: ./src/set-color.sh "${{ inputs.status }}"
 
@@ -33,7 +33,7 @@ runs:
             "text": "Repository: ${{ github.server_url }}/${{ github.repository }}",
             "attachments": [
               {
-                "color": "${{ steps.color.outputs.color }}",
+                "color": "${{ steps.statusColor.outputs.color }}",
                 "blocks": [
                   {
                     "type": "section",
@@ -62,4 +62,4 @@ runs:
       if: success()
       shell: bash
       run: |
-        echo "Slack notification sent successfully to channel: ${{ inputs.channel_id }}"
+        echo "Slack notification sent successfully to channel"
