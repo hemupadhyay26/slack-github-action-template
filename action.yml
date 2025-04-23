@@ -59,7 +59,7 @@ runs:
   using: "composite"
   steps:
     - name: Send Slack Message
-      uses: slackapi/slack-github-action@v2
+      uses: hemupadhyay26/slack-github-action@main
       env:
         SLACK_COLOR: ${{ inputs.status == 'success' && '#36a64f' || '#FF0000' }}
         CHANNEL_ID: ${{ inputs.channel_id }}
