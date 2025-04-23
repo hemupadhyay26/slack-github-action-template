@@ -1,10 +1,6 @@
 name: "Slack Notification"
 description: "Send a templated Slack notification after a GitHub Actions job"
 inputs:
-  template_file:
-    required: false
-    default: "default-payload.json"
-    description: "Name of the avaliable template file."
   status:
     required: true
     description: "The job status (success/failure)"
@@ -14,13 +10,16 @@ inputs:
   token:
     required: true
     description: "Slack bot token"
+  run_number:
+    required: true
+    description: "GitHub Actions run ID"
   channel_id:
     required: true
     description: "Slack channel ID"
-  run_id:
-    required: false
-    default: "${{ github.run_id }}"
-    description: "GitHub Actions run ID"
+  template_name:
+    required: true
+    default: "default-payload.json"
+    description: "The name of the template to use (e.g., 'default', 'plain-text')."
   api:
     required: false
     description: "A custom API URL to send Slack API method requests to."
@@ -28,15 +27,6 @@ inputs:
     required: false
     default: "false"
     description: "If the step exits with an error on errors or continues."
-  payload:
-    required: false
-    description: "Attributes that create the content of the request using JSON or YAML."
-  payload-delimiter:
-    required: false
-    description: "Field separator for nested attributes in the input payload."
-  payload-file-path:
-    required: false
-    description: "Path to a file containing a valid input payload made of JSON or YAML."
   payload-templated:
     required: false
     default: "true"
@@ -58,8 +48,19 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Load Template
+      id: load-template
+      shell: bash
+      run: |
+        TEMPLATE_PATH=".github/resources/.slack/${{ inputs.template_name }}"
+        if [ ! -f "$TEMPLATE_PATH" ]; then
+          echo "Error: Template $TEMPLATE_PATH not found!" >&2
+          exit 1
+        fi
+        echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
+
     - name: Send Slack Message
-      uses: hemupadhyay26/slack-github-action@main
+      uses: slackapi/slack-github-action@v2
       env:
         SLACK_COLOR: ${{ inputs.status == 'success' && '#36a64f' || '#FF0000' }}
         CHANNEL_ID: ${{ inputs.channel_id }}
@@ -68,7 +69,7 @@ runs:
       with:
         method: ${{ inputs.method }}
         token: ${{ inputs.token }}
-        payload-file-path: ./.github/resources/.slack/${{ inputs.template_file }}
+        payload-file-path: ${{ env.TEMPLATE_PATH }}
         payload-templated: ${{ inputs.payload-templated }}
         api: ${{ inputs.api }}
         proxy: ${{ inputs.proxy }}

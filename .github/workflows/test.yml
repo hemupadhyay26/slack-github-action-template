@@ -24,7 +24,7 @@ jobs:
           channel_id: ${{ vars.SLACK_CHANNEL_ID }}
           errors: true
 
-      - name: Run Slack Action for Success without Templating
+      - name: Run Slack Action for Success
         uses: ./
         with:
           status: success
@@ -45,7 +45,7 @@ jobs:
       - name: Run Slack Action with Plain Text Payload
         uses: ./
         with:
-          template_file: plain-text-payload.json
+          template_name: plain-text-payload.json
           status: ${{ job.status }}
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
