@@ -1,6 +1,10 @@
 name: "Slack Notification"
 description: "Send a templated Slack notification after a GitHub Actions job"
 inputs:
+  template_file:
+    required: false
+    default: "default-payload.json"
+    description: "Name of the avaliable template file."
   status:
     required: true
     description: "The job status (success/failure)"
@@ -10,12 +14,13 @@ inputs:
   token:
     required: true
     description: "Slack bot token"
-  run_number:
-    required: true
-    description: "GitHub Actions run ID"
   channel_id:
     required: true
     description: "Slack channel ID"
+  run_id:
+    required: false
+    default: "${{ github.run_id }}"
+    description: "GitHub Actions run ID"
   api:
     required: false
     description: "A custom API URL to send Slack API method requests to."
@@ -34,7 +39,7 @@ inputs:
     description: "Path to a file containing a valid input payload made of JSON or YAML."
   payload-templated:
     required: false
-    default: "false"
+    default: "true"
     description: "If templated variables in input payloads should be replaced."
   proxy:
     required: false
@@ -53,56 +58,24 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set Slack color
-      id: statusColor
-      shell: bash
-      run: ./src/set-color.sh "${{ inputs.status }}"
-
     - name: Send Slack Message
       uses: slackapi/slack-github-action@v2
+      env:
+        SLACK_COLOR: ${{ inputs.status == 'success' && '#36a64f' || '#FF0000' }}
+        CHANNEL_ID: ${{ inputs.channel_id }}
+        RUN_ID: ${{ inputs.run_id }}
+        STATUS: ${{ inputs.status }}
       with:
         method: ${{ inputs.method }}
         token: ${{ inputs.token }}
+        payload-file-path: ./.github/resources/.slack/${{ inputs.template_file }}
         payload-templated: ${{ inputs.payload-templated }}
-        payload-file-path: ${{ inputs.payload-file-path }}
-        payload-delimiter: ${{ inputs.payload-delimiter }}
         api: ${{ inputs.api }}
         proxy: ${{ inputs.proxy }}
         retries: ${{ inputs.retries }}
         webhook: ${{ inputs.webhook }}
         webhook-type: ${{ inputs.webhook-type }}
         errors: ${{ inputs.errors }}
-        payload: |
-          {
-            "channel": "${{ inputs.channel_id }}",
-            "text": "Repository: ${{ github.server_url }}/${{ github.repository }}",
-            "attachments": [
-              {
-                "color": "${{ steps.statusColor.outputs.color }}",
-                "blocks": [
-                  {
-                    "type": "section",
-                    "fields": [
-                      { "type": "mrkdwn", "text": "*Status:*\n${{ inputs.status }}" },
-                      { "type": "mrkdwn", "text": "*Author:*\n${{ github.actor }}" },
-                      { "type": "mrkdwn", "text": "*Branch:*\n${{ github.ref_name }}" }
-                    ]
-                  },
-                  {
-                    "type": "actions",
-                    "elements": [
-                      {
-                        "type": "button",
-                        "text": { "type": "plain_text", "emoji": true, "text": "View Logs" },
-                        "style": "primary",
-                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_number }}"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
 
     - name: Log Success Message
       if: success()
