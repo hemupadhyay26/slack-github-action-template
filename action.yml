@@ -53,56 +53,24 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set Slack color
-      id: statusColor
-      shell: bash
-      run: ./src/set-color.sh "${{ inputs.status }}"
-
     - name: Send Slack Message
-      uses: slackapi/slack-github-action@v2
+      uses: hemupadhyay26/slack-github-action@main
+      env:
+        SLACK_COLOR: ${{ inputs.status == 'success' && '#36a64f' || '#FF0000' }}
+        CHANNEL_ID: ${{ inputs.channel_id }}
+        RUN_ID: ${{ inputs.run_id }}
+        STATUS: ${{ inputs.status }}
       with:
         method: ${{ inputs.method }}
         token: ${{ inputs.token }}
+        payload-file-path: ./.github/resources/.slack/default-payload.json
         payload-templated: ${{ inputs.payload-templated }}
-        payload-file-path: ${{ inputs.payload-file-path }}
-        payload-delimiter: ${{ inputs.payload-delimiter }}
         api: ${{ inputs.api }}
         proxy: ${{ inputs.proxy }}
         retries: ${{ inputs.retries }}
         webhook: ${{ inputs.webhook }}
         webhook-type: ${{ inputs.webhook-type }}
         errors: ${{ inputs.errors }}
-        payload: |
-          {
-            "channel": "${{ inputs.channel_id }}",
-            "text": "Repository: ${{ github.server_url }}/${{ github.repository }}",
-            "attachments": [
-              {
-                "color": "${{ steps.statusColor.outputs.color }}",
-                "blocks": [
-                  {
-                    "type": "section",
-                    "fields": [
-                      { "type": "mrkdwn", "text": "*Status:*\n${{ inputs.status }}" },
-                      { "type": "mrkdwn", "text": "*Author:*\n${{ github.actor }}" },
-                      { "type": "mrkdwn", "text": "*Branch:*\n${{ github.ref_name }}" }
-                    ]
-                  },
-                  {
-                    "type": "actions",
-                    "elements": [
-                      {
-                        "type": "button",
-                        "text": { "type": "plain_text", "emoji": true, "text": "View Logs" },
-                        "style": "primary",
-                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_number }}"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
 
     - name: Log Success Message
       if: success()
