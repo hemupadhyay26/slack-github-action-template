@@ -14,12 +14,13 @@ inputs:
   token:
     required: true
     description: "Slack bot token"
-  run_number:
-    required: true
-    description: "GitHub Actions run ID"
   channel_id:
     required: true
     description: "Slack channel ID"
+  run_id:
+    required: false
+    default: "${{ github.run_id }}"
+    description: "GitHub Actions run ID"
   api:
     required: false
     description: "A custom API URL to send Slack API method requests to."
