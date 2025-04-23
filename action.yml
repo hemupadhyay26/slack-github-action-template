@@ -4,6 +4,9 @@ inputs:
   status:
     required: true
     description: "The job status (success/failure)"
+  method:
+    required: true
+    description: "The Slack API method to call."
   token:
     required: true
     description: "Slack bot token"
@@ -13,6 +16,40 @@ inputs:
   channel_id:
     required: true
     description: "Slack channel ID"
+  api:
+    required: false
+    description: "A custom API URL to send Slack API method requests to."
+  errors:
+    required: false
+    default: "false"
+    description: "If the step exits with an error on errors or continues."
+  payload:
+    required: false
+    description: "Attributes that create the content of the request using JSON or YAML."
+  payload-delimiter:
+    required: false
+    description: "Field separator for nested attributes in the input payload."
+  payload-file-path:
+    required: false
+    description: "Path to a file containing a valid input payload made of JSON or YAML."
+  payload-templated:
+    required: false
+    default: "false"
+    description: "If templated variables in input payloads should be replaced."
+  proxy:
+    required: false
+    description: "An optional proxied route for HTTPS connections."
+  retries:
+    required: false
+    default: "5"
+    description: "The strategy to use when performing retried requests."
+  webhook:
+    required: false
+    description: "A location for posting request payloads."
+  webhook-type:
+    required: false
+    description: "Option to use either an incoming webhook or webhook trigger."
+
 runs:
   using: "composite"
   steps:
@@ -24,9 +61,17 @@ runs:
     - name: Send Slack Message
       uses: slackapi/slack-github-action@v2
       with:
-        method: chat.postMessage
+        method: ${{ inputs.method }}
         token: ${{ inputs.token }}
-        payload-templated: true
+        payload-templated: ${{ inputs.payload-templated }}
+        payload-file-path: ${{ inputs.payload-file-path }}
+        payload-delimiter: ${{ inputs.payload-delimiter }}
+        api: ${{ inputs.api }}
+        proxy: ${{ inputs.proxy }}
+        retries: ${{ inputs.retries }}
+        webhook: ${{ inputs.webhook }}
+        webhook-type: ${{ inputs.webhook-type }}
+        errors: ${{ inputs.errors }}
         payload: |
           {
             "channel": "${{ inputs.channel_id }}",
@@ -58,6 +103,7 @@ runs:
               }
             ]
           }
+
     - name: Log Success Message
       if: success()
       shell: bash
