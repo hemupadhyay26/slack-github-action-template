@@ -30,20 +30,21 @@ jobs:
           payload-templated: true
           errors: true
 
-      # - name: Run Slack Action for Failure
-      #   uses: ./
-      #   with:
-      #     status: failure
-      #     method: chat.postMessage
-      #     token: ${{ secrets.SLACK_BOT_TOKEN }}
-      #     run_number: ${{ github.run_id }} 
-      #     channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+      - name: Run Slack Action for Failure
+        uses: ./
+        with:
+          status: failure
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_id: ${{ github.run_id }} 
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+          errors: true
 
-      # - name: Run Slack Action for Success
-      #   uses: ./
-      #   with:
-      #     status: success
-      #     method: chat.postMessage
-      #     token: ${{ secrets.SLACK_BOT_TOKEN }}
-      #     run_number: ${{ github.run_id }} 
-      #     channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+      - name: Run Slack Action for Success without Templating
+        uses: ./
+        with:
+          status: success
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_id: ${{ github.run_id }} 
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}

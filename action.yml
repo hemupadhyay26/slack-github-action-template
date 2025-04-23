@@ -34,7 +34,7 @@ inputs:
     description: "Path to a file containing a valid input payload made of JSON or YAML."
   payload-templated:
     required: false
-    default: "false"
+    default: "true"
     description: "If templated variables in input payloads should be replaced."
   proxy:
     required: false
