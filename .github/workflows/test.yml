@@ -1,0 +1,22 @@
+name: Slack Notification Test
+
+on:
+  push: 
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  slack-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Slack Action Locally
+        uses: ./
+        with:
+          status: ${{ job.status }}
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_number: ${{ github.run_number }} 
+          channel_id: C08M4MK1QLD

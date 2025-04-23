@@ -1,0 +1,65 @@
+name: "Slack Notification"
+description: "Send a templated Slack notification after a GitHub Actions job"
+inputs:
+  status:
+    required: true
+    description: "The job status (success/failure)"
+  token:
+    required: true
+    description: "Slack bot token"
+  run_number:
+    required: true
+    description: "GitHub Actions run ID"
+  channel_id:
+    required: true
+    description: "Slack channel ID"
+runs:
+  using: "composite"
+  steps:
+    - name: Set Slack color
+      id: color
+      shell: bash
+      run: ./src/set-color.sh "${{ inputs.status }}"
+
+    - name: Send Slack Message
+      uses: slackapi/slack-github-action@v2
+      with:
+        method: chat.postMessage
+        token: ${{ inputs.token }}
+        payload-templated: true
+        payload: |
+          {
+            "channel": "${{ inputs.channel_id }}",
+            "text": "Repository: ${{ github.server_url }}/${{ github.repository }}",
+            "attachments": [
+              {
+                "color": "${{ steps.color.outputs.color }}",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "fields": [
+                      { "type": "mrkdwn", "text": "*Status:*\n${{ inputs.status }}" },
+                      { "type": "mrkdwn", "text": "*Author:*\n${{ github.actor }}" },
+                      { "type": "mrkdwn", "text": "*Branch:*\n${{ github.ref_name }}" }
+                    ]
+                  },
+                  {
+                    "type": "actions",
+                    "elements": [
+                      {
+                        "type": "button",
+                        "text": { "type": "plain_text", "emoji": true, "text": "View Logs" },
+                        "style": "primary",
+                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_number }}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+    - name: Log Success Message
+      if: success()
+      shell: bash
+      run: |
+        echo "Slack notification sent successfully to channel: ${{ inputs.channel_id }}"
