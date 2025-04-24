@@ -10,7 +10,7 @@ inputs:
   token:
     required: true
     description: "Slack bot token"
-  run_number:
+  run_id:
     required: true
     description: "GitHub Actions run ID"
   channel_id:
@@ -59,8 +59,6 @@ runs:
         fi
         echo "✅ Using template: $TEMPLATE_PATH"
         echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> "$GITHUB_ENV"
-
-
 
     - name: Send Slack Message
       uses: slackapi/slack-github-action@v2
