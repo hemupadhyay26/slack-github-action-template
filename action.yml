@@ -1,6 +1,10 @@
 name: "Slack Notification"
 description: "Send a templated Slack notification after a GitHub Actions job"
 inputs:
+  template_file:
+    required: false
+    default: "default-payload.json"
+    description: "Name of the avaliable template file."
   status:
     required: true
     description: "The job status (success/failure)"
@@ -59,7 +63,7 @@ runs:
         fi
         echo "✅ Using template: $TEMPLATE_PATH"
         echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> "$GITHUB_ENV"
-
+        
     - name: Send Slack Message
       uses: slackapi/slack-github-action@v2
       env:
