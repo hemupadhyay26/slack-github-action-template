@@ -1,4 +1,0 @@
-{
-    "channel": "${{ env.CHANNEL_ID }}",
-    "text": "Build result: ${{ env.STATUS }}\nRepo: ${{ github.payload.repository.full_name }}\nBranch: ${{ github.ref }}\nView logs: ${{ github.payload.repository.html_url }}/actions/runs/${{ env.RUN_ID }}"
-}

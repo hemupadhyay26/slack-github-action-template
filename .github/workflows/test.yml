@@ -8,6 +8,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  test-plain-text-payload:
+    name: Test Plain Text Payload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Slack Action with Plain Text Payload
+        uses: ./
+        with:
+          template_name: plain-text-payload.json
+          status: ${{ job.status }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+          errors: true
+
   test-default-payload:
     name: Test Default Payload
     runs-on: ubuntu-latest
@@ -34,21 +51,6 @@ jobs:
           run_id: ${{ github.run_id }} 
           channel_id: ${{ vars.SLACK_CHANNEL_ID }}
           errors: true
-  
 
-  test-plain-text-payload:
-    name: Test Plain Text Payload
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Run Slack Action with Plain Text Payload
-        uses: ./
-        with:
-          template_name: plain-text-payload.json
-          status: ${{ job.status }}
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          run_id: ${{ github.run_id }}
-          channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+      
