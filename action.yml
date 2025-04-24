@@ -68,6 +68,7 @@ runs:
         CHANNEL_ID: ${{ inputs.channel_id }}
         RUN_ID: ${{ inputs.run_id }}
         STATUS: ${{ inputs.status }}
+        STATUS_TEXT: ${{ inputs.status == 'success' && 'Succeeded ✅' || 'Failed ❌' }}
       with:
         method: ${{ inputs.method }}
         token: ${{ inputs.token }}
