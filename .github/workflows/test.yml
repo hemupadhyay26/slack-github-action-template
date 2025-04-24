@@ -21,6 +21,7 @@ jobs:
           status: failure
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_id: ${{ github.run_id }}
           channel_id: ${{ vars.SLACK_CHANNEL_ID }}
           errors: true
 
@@ -49,4 +50,5 @@ jobs:
           status: ${{ job.status }}
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_id: ${{ github.run_id }}
           channel_id: ${{ vars.SLACK_CHANNEL_ID }}
