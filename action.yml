@@ -52,12 +52,15 @@ runs:
       id: load-template
       shell: bash
       run: |
-        TEMPLATE_PATH=".github/resources/.slack/${{ inputs.template_name }}"
+        TEMPLATE_PATH="$GITHUB_ACTION_PATH/resources/.slack/${{ inputs.template_name }}"
         if [ ! -f "$TEMPLATE_PATH" ]; then
-          echo "Error: Template $TEMPLATE_PATH not found!" >&2
+          echo "❌ Template not found: $TEMPLATE_PATH" >&2
           exit 1
         fi
-        echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
+        echo "✅ Using template: $TEMPLATE_PATH"
+        echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> "$GITHUB_ENV"
+
+
 
     - name: Send Slack Message
       uses: slackapi/slack-github-action@v2
