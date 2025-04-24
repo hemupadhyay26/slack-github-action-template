@@ -51,6 +51,22 @@ jobs:
           run_id: ${{ github.run_id }} 
           channel_id: ${{ vars.SLACK_CHANNEL_ID }}
           errors: true
+  test-detail-payload:
+    name: Test Detail Payload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Run Slack Action with detail-payload
+        uses: ./
+        with:
+          status: ${{ job.status }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          run_id: ${{ github.run_id }}
+          channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+          template_name: detail-payload.json
+          errors: true
 
       

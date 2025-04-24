@@ -1,0 +1,54 @@
+{
+    "channel": "${{ env.CHANNEL_ID }}",
+    "text": "Repository: ${{ github.payload.repository.html_url }}",
+	"attachments": [
+		{
+			"color": "${{ env.SLACK_COLOR }}",
+			"blocks": [
+				{
+					"type": "header",
+					"text": {
+						"type": "plain_text",
+						"text": "🚀 Build ${{ env.STATUS_TEXT }} ",
+						"emoji": true
+					}
+				},
+				{
+					"type": "section",
+					"fields": [
+						{
+							"type": "mrkdwn",
+							"text": "*Repository:*\n${{ github.payload.repository.full_name }}"
+						},
+						{
+							"type": "mrkdwn",
+							"text": "*Branch:*\n${{ github.ref }}"
+						},
+						{
+							"type": "mrkdwn",
+							"text": "*Commit:*\n`${{ github.sha }}`"
+						},
+						{
+							"type": "mrkdwn",
+							"text": "*Author:*\n${{ github.actor }}"
+						}
+					]
+				},
+				{
+					"type": "actions",
+					"elements": [
+						{
+							"type": "button",
+							"text": {
+								"type": "plain_text",
+								"text": "🔍 View Workflow Logs",
+								"emoji": true
+							},
+							"url": "${{ github.payload.repository.html_url }}/actions/runs/${{ env.RUN_ID }}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
