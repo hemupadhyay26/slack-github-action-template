@@ -1,5 +1,9 @@
-name: "Slack Notification"
+name: "Slack Notification Template"
 description: "Send a templated Slack notification after a GitHub Actions job"
+author: "hemupadhyay26"
+branding:
+  icon: "message-square"
+  color: "blue"
 inputs:
   status:
     required: true
