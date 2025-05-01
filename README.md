@@ -68,7 +68,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Send Slack Notification 
-        uses: hemupadhyay26/slack-github-action-template@v1
+        uses: hemupadhyay26/slack-github-action-template@v1.0
         with:
           status: success
           method: chat.postMessage
@@ -83,7 +83,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Send Slack Notification with Plain Text Template
-        uses: hemupadhyay26/slack-github-action-template@v1
+        uses: hemupadhyay26/slack-github-action-template@v1.0
         with:
           status: failure
           method: chat.postMessage
